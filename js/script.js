@@ -494,7 +494,7 @@
     // 7. PROJECTS SYSTEM
     // ==========================================
 
-    const projectFolders = ['bookmyshow', 'bigbasket', 'uber'];
+    const projectFolders = ['bookmyshow', 'bigbasket', 'uber', 'jtbd'];
     const loadedProjects = [];
 
     function loadProjects() {
@@ -686,7 +686,7 @@
         const caseArchive = document.getElementById('caseStudyArchiveModal');
         const blogArchive = document.getElementById('blogArchiveModal');
         const isArchiveOpen = (caseArchive && caseArchive.classList.contains('project-modal--open')) ||
-                              (blogArchive && blogArchive.classList.contains('project-modal--open'));
+            (blogArchive && blogArchive.classList.contains('project-modal--open'));
         if (!isArchiveOpen) {
             document.body.style.overflow = '';
         }
@@ -1689,7 +1689,14 @@
     const blogPosts = []; // Will be populated if blog content files exist
 
     function loadBlogs() {
-        // Attempt to load a blog index file
+        if (typeof blogContent !== 'undefined' && Array.isArray(blogContent)) {
+            blogContent.forEach(function (post) {
+                if (hasContent(post)) blogPosts.push(post);
+            });
+            renderBlogs();
+            return;
+        }
+
         const script = document.createElement('script');
         script.src = 'content/blogs/blogs.js';
 
@@ -1719,6 +1726,7 @@
         if (blogPosts.length === 0) {
             section.classList.add('hidden');
         } else {
+            section.classList.remove('hidden');
             blogPosts.forEach(function (post, index) {
                 if (index >= 2) return; // Only show up to 2 blogs on landing page
 
@@ -1878,7 +1886,7 @@
         const caseArchive = document.getElementById('caseStudyArchiveModal');
         const blogArchive = document.getElementById('blogArchiveModal');
         const isArchiveOpen = (caseArchive && caseArchive.classList.contains('project-modal--open')) ||
-                              (blogArchive && blogArchive.classList.contains('project-modal--open'));
+            (blogArchive && blogArchive.classList.contains('project-modal--open'));
         if (!isArchiveOpen) {
             document.body.style.overflow = '';
         }
@@ -2253,7 +2261,7 @@
     // ==========================================
 
     function hideEmptySections() {
-        // Only hide blog if truly empty (projects and certificates now show placeholders)
+        // Only hide blog if truly empty
         var checks = [
             { gridId: 'blogGrid', sectionId: 'blog' }
         ];
@@ -2261,19 +2269,24 @@
         checks.forEach(function (check) {
             var grid = document.getElementById(check.gridId);
             var section = document.getElementById(check.sectionId);
-            if (grid && section && grid.children.length === 0) {
-                section.classList.add('hidden');
+            if (grid && section) {
+                if (grid.children.length === 0) {
+                    section.classList.add('hidden');
+                } else {
+                    section.classList.remove('hidden');
+                }
             }
         });
 
         // Hide nav links for hidden sections
         document.querySelectorAll('.nav__link[data-section]').forEach(function (link) {
             var sectionId = link.dataset.section;
-            // Contact links to footer, skip check
             if (sectionId === 'contact') return;
             var section = document.getElementById(sectionId);
             if (section && section.classList.contains('hidden')) {
                 link.style.display = 'none';
+            } else if (section) {
+                link.style.display = '';
             }
         });
 
@@ -2284,6 +2297,8 @@
             var section = document.getElementById(sectionId);
             if (section && section.classList.contains('hidden')) {
                 link.style.display = 'none';
+            } else if (section) {
+                link.style.display = '';
             }
         });
     }
