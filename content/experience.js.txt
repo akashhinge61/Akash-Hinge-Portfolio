@@ -1,0 +1,56 @@
+const experienceContent = [
+
+    {
+        company: "YOUR COMPANY NAME",
+
+        role: "YOUR JOB TITLE",
+
+        location: "YOUR LOCATION",
+
+        startDate: "START DATE",
+
+        endDate: "END DATE",
+
+        description: "YOUR SHORT EXPERIENCE DESCRIPTION",
+
+        highlights: [
+            "YOUR EXPERIENCE HIGHLIGHT",
+            "YOUR EXPERIENCE HIGHLIGHT",
+            "YOUR EXPERIENCE HIGHLIGHT"
+        ],
+
+        tags: [
+            "YOUR TAG",
+            "YOUR TAG",
+            "YOUR TAG"
+        ]
+    },
+
+
+    {
+        company: "YOUR COMPANY NAME",
+
+        role: "YOUR JOB TITLE",
+
+        location: "YOUR LOCATION",
+
+        startDate: "START DATE",
+
+        endDate: "END DATE",
+
+        description: "YOUR SHORT EXPERIENCE DESCRIPTION",
+
+        highlights: [
+            "YOUR EXPERIENCE HIGHLIGHT",
+            "YOUR EXPERIENCE HIGHLIGHT",
+            "YOUR EXPERIENCE HIGHLIGHT"
+        ],
+
+        tags: [
+            "YOUR TAG",
+            "YOUR TAG",
+            "YOUR TAG"
+        ]
+    }
+
+];

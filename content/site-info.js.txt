@@ -1,0 +1,11 @@
+const siteInfo = {
+    name: "Akash Hinge",
+
+    email: "akashhinge61@gmail.com",
+
+    linkedin: "https://www.linkedin.com/in/akash-hinge-85bb63313",
+
+    github: "https://github.com/akashhinge61",
+
+    resume: "Akash PM Portfolio\assets\resume"
+};

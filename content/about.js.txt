@@ -1,0 +1,47 @@
+const aboutContent = {
+
+    // ==========================================
+    // ABOUT INTRO
+    // ==========================================
+
+    heading: "YOUR ABOUT HEADING",
+
+    introduction: "YOUR ABOUT INTRODUCTION HERE.",
+
+    description: "YOUR SECOND ABOUT PARAGRAPH HERE.",
+
+
+    // ==========================================
+    // CURRENT FOCUS
+    // ==========================================
+
+    currentFocus: "YOUR CURRENT PRODUCT MANAGEMENT FOCUS HERE.",
+
+
+    // ==========================================
+    // JOURNEY
+    // ==========================================
+
+    journey: [
+
+        {
+            year: "YEAR",
+            title: "YOUR JOURNEY TITLE",
+            description: "YOUR JOURNEY DESCRIPTION"
+        },
+
+        {
+            year: "YEAR",
+            title: "YOUR JOURNEY TITLE",
+            description: "YOUR JOURNEY DESCRIPTION"
+        },
+
+        {
+            year: "YEAR",
+            title: "YOUR JOURNEY TITLE",
+            description: "YOUR JOURNEY DESCRIPTION"
+        }
+
+    ]
+
+};

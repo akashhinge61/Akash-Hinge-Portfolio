@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Akash Hinge — Product Management Portfolio</title>
+    <meta name="description" content="Product Management portfolio of Akash Hinge — product discovery, user research, UX thinking, and product problem-solving.">
+    <meta name="theme-color" content="#FAFAF9">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Akash Hinge — Product Management Portfolio">
+    <meta property="og:description" content="Product discovery, user research, UX thinking, and product problem-solving.">
+    <meta property="og:type" content="website">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- ==========================================
+         NAVIGATION
+         ========================================== -->
+    <nav class="nav" id="nav" role="navigation" aria-label="Main navigation">
+        <div class="nav__inner">
+            <a href="#home" class="nav__logo" aria-label="Home">
+                AH<span>.</span>
+            </a>
+
+            <div class="nav__links" id="navLinks">
+                <a href="#home" class="nav__link nav__link--active" data-section="home">Home</a>
+                <a href="#about" class="nav__link" data-section="about">About</a>
+                <a href="#education" class="nav__link" data-section="education">Education</a>
+                <a href="#projects" class="nav__link" data-section="projects">Projects</a>
+                <a href="#experience" class="nav__link" data-section="experience">Experience</a>
+                <a href="#certificates" class="nav__link" data-section="certificates">Certificates</a>
+                <a href="#blog" class="nav__link" data-section="blog">Blog</a>
+                <a href="#contact" class="nav__link" data-section="contact">Contact</a>
+            </div>
+
+            <button class="nav__toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+
+        <!-- Mobile nav overlay -->
+        <div class="nav__overlay" id="navOverlay">
+            <a href="#home" class="nav__link" data-section="home">Home</a>
+            <a href="#about" class="nav__link" data-section="about">About</a>
+            <a href="#education" class="nav__link" data-section="education">Education</a>
+            <a href="#projects" class="nav__link" data-section="projects">Projects</a>
+            <a href="#experience" class="nav__link" data-section="experience">Experience</a>
+            <a href="#certificates" class="nav__link" data-section="certificates">Certificates</a>
+            <a href="#blog" class="nav__link" data-section="blog">Blog</a>
+            <a href="#contact" class="nav__link" data-section="contact">Contact</a>
+        </div>
+    </nav>
+
+    <main>
+
+        <!-- ==========================================
+             HERO / HOME
+             ========================================== -->
+        <section class="hero" id="home" style="position: relative;">
+            <div class="container">
+                <div class="hero__inner">
+                    <div class="hero__content">
+                        <div class="hero__badge">
+                            <span>Product Management</span>
+                        </div>
+
+                        <h1 class="hero__name" id="heroName"></h1>
+
+                        <p class="hero__headline" id="heroHeadline"></p>
+
+                        <p class="hero__tagline" id="heroTagline"></p>
+
+                        <div class="hero__actions" id="heroActions"></div>
+
+                        <div class="hero__socials" id="heroSocials"></div>
+                    </div>
+
+                    <div class="hero__image-wrapper" style="position: relative;">
+                        <!-- Animated Living Orbit Doodle -->
+                        <svg class="living-doodle living-doodle--orbit" viewBox="0 0 100 100" fill="none" stroke="var(--color-accent)" stroke-width="1.5" stroke-dasharray="4 3" aria-hidden="true">
+                            <circle cx="50" cy="50" r="42" opacity="0.65"/>
+                            <circle cx="50" cy="8" r="4" fill="var(--color-accent)"/>
+                            <circle cx="92" cy="50" r="3" fill="var(--color-accent)" opacity="0.8"/>
+                        </svg>
+
+                        <div class="hero__avatar-stage" id="heroImageFrame">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             ABOUT
+             ========================================== -->
+        <section class="about" id="about" style="position: relative;">
+            <div class="container" style="position: relative;">
+                <!-- Large Rotating Curving Orbit Doodle cropped on screen right edge -->
+                <svg class="living-doodle living-doodle--about-orbit" viewBox="0 0 200 200" fill="none" stroke="var(--color-accent)" stroke-width="1.5" stroke-dasharray="5 4" aria-hidden="true">
+                    <path d="M 100 15 C 160 15, 185 70, 185 100 C 185 155, 140 185, 100 185 C 45 185, 15 140, 15 100 C 15 50, 50 15, 100 15 Z" opacity="0.6" />
+                    <circle cx="100" cy="15" r="4.5" fill="var(--color-accent)" />
+                    <circle cx="185" cy="100" r="3.5" fill="var(--color-accent)" opacity="0.8" />
+                    <circle cx="15" cy="100" r="4" fill="var(--color-accent)" opacity="0.8" />
+                </svg>
+
+                <div class="section-label reveal">About</div>
+
+                <!-- About intro — rendered by JS -->
+                <div class="about__intro reveal" id="aboutIntro"></div>
+
+                <!-- Education — rendered by JS -->
+                <div id="education" class="education-section-anchor reveal">
+                    <div id="educationContainer"></div>
+                </div>
+
+                <!-- Mission & Vision flip cards -->
+                <div class="mission-vision reveal" id="missionVisionContainer"></div>
+
+                <!-- Journey timeline -->
+                <div class="journey" id="journeyContainer"></div>
+
+            </div>
+        </section>
+
+        <!-- ==========================================
+             PROJECTS
+             ========================================== -->
+        <section class="projects" id="projects" style="position: relative;">
+            <div class="container" style="position: relative;">
+                <div class="section-label reveal">Projects</div>
+                <h2 class="section-title reveal">Case Studies</h2>
+                <p class="section-subtitle reveal">Product thinking through real-world problem exploration</p>
+
+                <div class="projects__grid" id="projectsGrid" style="margin-top: var(--space-2xl);">
+                    <!-- Project cards rendered by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             EXPERIENCE
+             ========================================== -->
+        <section class="experience" id="experience" style="position: relative;">
+            <div class="container" style="position: relative;">
+                <div class="section-label reveal">Experience</div>
+                <h2 class="section-title reveal">Work Journey</h2>
+
+                <div class="experience__timeline" id="experienceTimeline" style="margin-top: var(--space-2xl);">
+                    <!-- Experience cards rendered by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             CERTIFICATES
+             ========================================== -->
+        <section class="certificates" id="certificates" style="position: relative;">
+            <div class="container" style="position: relative;">
+                <div class="section-label reveal">Certificates</div>
+                <h2 class="section-title reveal">Learning & Growth</h2>
+
+                <div class="certificates__grid" id="certificatesGrid" style="margin-top: var(--space-2xl);">
+                    <!-- Certificate cards rendered by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             BLOG
+             ========================================== -->
+        <section class="blog" id="blog" style="position: relative;">
+            <div class="container" style="position: relative;">
+                <div class="section-label reveal">Blog</div>
+                <h2 class="section-title reveal">Observations & Thinking</h2>
+
+                <div class="blog__grid" id="blogGrid" style="margin-top: var(--space-2xl);">
+                    <!-- Blog cards rendered by JS -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ==========================================
+         FOOTER / CONTACT
+         ========================================== -->
+    <footer class="footer" id="contact" style="position: relative;">
+        <div class="container" style="position: relative;">
+            <div class="footer__inner">
+                <div class="footer__cta-label">Get in touch</div>
+                <h2 class="footer__cta-title" style="position: relative; display: inline-block;">
+                    Let's Talk
+                    <!-- Paper Airplane Animated Doodle (Flies from Let's Talk to top right) -->
+                    <svg class="footer-paper-plane" id="footerPaperPlane" viewBox="0 0 60 60" fill="none" stroke="var(--color-accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <polygon points="50,10 10,28 26,38 38,22 30,48 50,10" fill="rgba(57, 255, 20, 0.15)" />
+                        <path d="M 10 28 C -2 40, 12 52, 26 38" stroke-dasharray="3 3" opacity="0.8" />
+                        <circle cx="4" cy="48" r="2.5" fill="var(--color-accent)" />
+                    </svg>
+                </h2>
+                <p class="footer__cta-text">Interested in product thinking, collaboration, or just want to connect — I'd love to hear from you.</p>
+
+                <div class="footer__actions" id="footerActions">
+                    <!-- Rendered by JS -->
+                </div>
+
+                <div class="footer__links" id="footerLinks">
+                    <!-- Rendered by JS -->
+                </div>
+
+                <div class="footer__divider"></div>
+
+                <div class="footer__bottom">
+                    &copy; <span id="footerYear"></span> Akash Hinge. Built with curiosity.
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Lightbox for certificate images -->
+    <div class="lightbox" id="lightbox" role="dialog" aria-label="Image preview" aria-hidden="true">
+        <button class="lightbox__close" id="lightboxClose" aria-label="Close preview">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+        <img class="lightbox__image" id="lightboxImage" src="" alt="Certificate preview">
+    </div>
+
+    <!-- Blog modal overlay -->
+    <div class="blog-modal" id="blogModal" role="dialog" aria-label="Blog article" aria-hidden="true">
+        <div class="blog-modal__backdrop" id="blogModalBackdrop"></div>
+        <div class="blog-modal__container">
+            <button class="blog-modal__close" id="blogModalClose" aria-label="Close article">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+            <div class="blog-modal__content" id="blogModalContent">
+                <!-- Blog article injected by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Project case study modal overlay with blurred backdrop -->
+    <div class="project-modal" id="projectModal" role="dialog" aria-label="Case Study" aria-hidden="true">
+        <div class="project-modal__backdrop" id="projectModalBackdrop"></div>
+        <div class="project-modal__container">
+            <button class="project-modal__close" id="projectModalClose" aria-label="Close case study">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+            <div class="project-modal__content" id="projectModalContent">
+                <!-- Case study injected by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Certificate modal overlay with blurred backdrop -->
+    <div class="project-modal cert-modal" id="certModal" role="dialog" aria-label="Certificate details" aria-hidden="true">
+        <div class="project-modal__backdrop" id="certModalBackdrop"></div>
+        <div class="project-modal__container">
+            <button class="project-modal__close" id="certModalClose" aria-label="Close certificate details">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+            <div class="project-modal__content" id="certModalContent">
+                <!-- Certificate details injected by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Content files -->
+    <script src="content/site-info.js"></script>
+    <script src="content/about.js"></script>
+    <script src="content/education.js"></script>
+    <script src="content/experience.js"></script>
+    <script src="content/mission-vision.js"></script>
+    <script src="content/certificates/certificate.js"></script>
+
+    <!-- Main script -->
+    <script src="js/script.js"></script>
+
+</body>
+</html>

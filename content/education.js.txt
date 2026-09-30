@@ -1,0 +1,13 @@
+const educationContent = {
+
+    degree: "Bachelor of Business Administration (BBA)",
+
+    institution: "DY Patil University, Ambi, Pune",
+
+    duration: "YOUR EDUCATION DURATION",
+
+    expectedCompletion: "2027",
+
+    description: "YOUR EDUCATION DESCRIPTION HERE."
+
+};

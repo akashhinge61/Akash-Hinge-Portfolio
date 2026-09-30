@@ -1,0 +1,24 @@
+const missionVision = {
+
+    // ==========================================
+    // MISSION
+    // ==========================================
+
+    mission: {
+        title: "Mission",
+
+        text: "YOUR MISSION STATEMENT HERE"
+    },
+
+
+    // ==========================================
+    // VISION
+    // ==========================================
+
+    vision: {
+        title: "Vision",
+
+        text: "YOUR VISION STATEMENT HERE"
+    }
+
+};
