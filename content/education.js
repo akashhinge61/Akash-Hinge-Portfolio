@@ -18,14 +18,15 @@ const educationContent = {
     collegeJourney: {
         summary: "An evolving journey through business, product thinking, and hands-on learning at DY Patil University.",
         highlights: [
-            "Exploring core business subjects — marketing, finance, operations, and organizational behavior",
+            "Exploring core business subjects - marketing, finance, operations, and organizational behavior",
             "Self-studying Product Management through online courses, case studies, and product teardowns",
             "Participating in college events and activities to develop leadership and coordination skills",
             "Building real-world project experience through internships alongside academics"
         ],
         clubs: [
-            "Add your club or committee involvement here",
-            "Add any event coordination or leadership roles"
+            "Led 1–3 cultural projects with teams of 10–15 members, managing coordination and task delegation.",
+            "Worked with the Training & Placement Club during first year, gaining experience in teamwork and coordination.",
+			"Gained exposure to industry trends, placement activities, and professional interactions."
         ]
     }
 

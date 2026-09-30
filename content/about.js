@@ -6,11 +6,11 @@ const aboutContent = {
 
     heading: "I think in products.",
 
-    introduction: "I'm Akash — a BBA student at DY Patil University with a deep interest in how products are built, why users behave the way they do, and what separates good products from great ones.",
+    introduction: "I'm Akash, a BBA student at DY Patil University with a deep interest in how products are built, why users behave the way they do, and what separates good products from great ones.",
 
     description: "I spend my time exploring product discovery, user research, and UX thinking. I break down real-world apps, map user journeys, build wireframes, and try to understand the 'why' behind every product decision.",
 
-    currentFocus: "Currently diving deeper into product case studies, frameworks like JTBD and RICE, and building end-to-end product thinking through hands-on projects.",
+    currentFocus: "Currently looking for opportunities to start my career in Product Management while continuing to learn and build my skills in product discovery, user research, UX, and product development. I’m focused on gaining hands-on experience and understanding how real products are built around user needs.",
 
     journey: [
         {
@@ -30,7 +30,7 @@ const aboutContent = {
         },
         {
             year: "2026",
-            title: "Building the Portfolio",
+            title: "Learning Product Management",
             description: "Working on product case studies, deepening PM skills, and preparing for a career in Product Management."
         }
     ]

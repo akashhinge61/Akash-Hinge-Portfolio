@@ -339,11 +339,12 @@
                 if (hList.children.length) panelInner.appendChild(hList);
             }
 
-            if (hasContent(edu.collegeJourney.clubs)) {
+            const clubsOrActivities = edu.collegeJourney.activties || edu.collegeJourney.activities || edu.collegeJourney.clubs;
+            if (hasContent(clubsOrActivities)) {
                 var cTitle = el('div', 'education-card__panel-label', 'Clubs & Activities');
                 panelInner.appendChild(cTitle);
                 var cList = el('ul', 'education-card__panel-list');
-                edu.collegeJourney.clubs.forEach(function (c) {
+                clubsOrActivities.forEach(function (c) {
                     if (hasContent(c)) cList.appendChild(el('li', '', esc(c)));
                 });
                 if (cList.children.length) panelInner.appendChild(cList);
@@ -538,6 +539,8 @@
         const grid = document.getElementById('projectsGrid');
         if (!grid) return;
 
+        grid.innerHTML = '';
+
         if (loadedProjects.length === 0) {
             // Show placeholder project cards instead of hiding
             for (var i = 0; i < 3; i++) {
@@ -551,20 +554,19 @@
                 grid.appendChild(placeholder);
             }
         } else {
-            // Show first 4 projects (2x2 grid), hide rest behind View More
+            // Show up to 4 projects (2x2 grid) on landing page
             loadedProjects.forEach(function (project, index) {
+                if (index >= 4) return;
+
                 var wrapper = el('div', 'project-wrapper reveal');
                 wrapper.style.transitionDelay = (index * 150) + 'ms';
-                if (index >= 4) {
-                    wrapper.classList.add('project-wrapper--hidden');
-                }
 
                 var card = createProjectCard(project, index);
                 wrapper.appendChild(card);
                 grid.appendChild(wrapper);
             });
 
-            // Add View More / View Less button container
+            // Add View More Case Studies button container
             var existingProjBtn = grid.parentElement.querySelector('.projects__view-more-container');
             if (existingProjBtn) existingProjBtn.remove();
 
@@ -572,34 +574,10 @@
             var viewMoreBtn = document.createElement('button');
             viewMoreBtn.className = 'projects__view-more';
             viewMoreBtn.innerHTML = 'View More Case Studies <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>';
-            
-            if (loadedProjects.length > 4) {
-                var isProjectsExpanded = false;
-                viewMoreBtn.addEventListener('click', function () {
-                    isProjectsExpanded = !isProjectsExpanded;
-                    var wrappers = grid.querySelectorAll('.project-wrapper');
-                    wrappers.forEach(function (p, i) {
-                        if (i >= 4) {
-                            if (isProjectsExpanded) {
-                                p.classList.remove('project-wrapper--hidden');
-                            } else {
-                                p.classList.add('project-wrapper--hidden');
-                            }
-                        }
-                    });
-                    if (isProjectsExpanded) {
-                        viewMoreBtn.innerHTML = 'View Less Case Studies <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="transform: rotate(180deg);"><polyline points="6 9 12 15 18 9"/></svg>';
-                    } else {
-                        viewMoreBtn.innerHTML = 'View More Case Studies <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>';
-                        var section = document.getElementById('projects');
-                        if (section) section.scrollIntoView({ behavior: 'smooth' });
-                    }
-                    initScrollReveal();
-                });
-            } else {
-                viewMoreBtn.style.opacity = '0.7';
-                viewMoreBtn.title = 'Additional case studies will expand when 5+ projects exist';
-            }
+            viewMoreBtn.addEventListener('click', function () {
+                openCaseStudyArchiveModal();
+            });
+
             viewMoreContainer.appendChild(viewMoreBtn);
             grid.parentElement.appendChild(viewMoreContainer);
         }
@@ -705,8 +683,166 @@
         if (!modal) return;
         modal.classList.remove('project-modal--open');
         modal.setAttribute('aria-hidden', 'true');
+        const caseArchive = document.getElementById('caseStudyArchiveModal');
+        const blogArchive = document.getElementById('blogArchiveModal');
+        const isArchiveOpen = (caseArchive && caseArchive.classList.contains('project-modal--open')) ||
+                              (blogArchive && blogArchive.classList.contains('project-modal--open'));
+        if (!isArchiveOpen) {
+            document.body.style.overflow = '';
+        }
+    }
+
+    // ==========================================
+    // CASE STUDY ARCHIVE MODAL & FILTERING
+    // ==========================================
+
+    function initCaseStudyArchiveModal() {
+        const modal = document.getElementById('caseStudyArchiveModal');
+        const backdrop = document.getElementById('caseStudyArchiveBackdrop');
+        const closeBtn = document.getElementById('caseStudyArchiveClose');
+        const dateFilter = document.getElementById('caseStudyDateFilter');
+
+        if (backdrop) backdrop.addEventListener('click', closeCaseStudyArchiveModal);
+        if (closeBtn) closeBtn.addEventListener('click', closeCaseStudyArchiveModal);
+        if (dateFilter) dateFilter.addEventListener('change', renderCaseStudyArchiveGrid);
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && modal && modal.classList.contains('project-modal--open')) {
+                closeCaseStudyArchiveModal();
+            }
+        });
+    }
+
+    function openCaseStudyArchiveModal() {
+        const modal = document.getElementById('caseStudyArchiveModal');
+        if (!modal) return;
+
+        populateCaseStudyArchiveFilters();
+        renderCaseStudyArchiveGrid();
+
+        modal.classList.add('project-modal--open');
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeCaseStudyArchiveModal() {
+        const modal = document.getElementById('caseStudyArchiveModal');
+        if (!modal) return;
+        modal.classList.remove('project-modal--open');
+        modal.setAttribute('aria-hidden', 'true');
         document.body.style.overflow = '';
     }
+
+    function populateCaseStudyArchiveFilters() {
+        const dateFilter = document.getElementById('caseStudyDateFilter');
+        if (!dateFilter) return;
+
+        const dates = new Set();
+
+        loadedProjects.forEach(function (p) {
+            if (p.data && hasContent(p.data.date)) {
+                dates.add(p.data.date.trim());
+            }
+        });
+
+        const selectedDate = dateFilter.value;
+        dateFilter.innerHTML = '<option value="ALL">All Dates</option>';
+        dates.forEach(function (d) {
+            const opt = document.createElement('option');
+            opt.value = d;
+            opt.textContent = d;
+            if (d === selectedDate) opt.selected = true;
+            dateFilter.appendChild(opt);
+        });
+    }
+
+    function renderCaseStudyArchiveGrid() {
+        const grid = document.getElementById('caseStudyArchiveGrid');
+        const dateFilter = document.getElementById('caseStudyDateFilter');
+        if (!grid) return;
+
+        grid.innerHTML = '';
+        const selectedDate = dateFilter ? dateFilter.value : 'ALL';
+
+        const filtered = loadedProjects.filter(function (p) {
+            if (!p.data) return false;
+            return (selectedDate === 'ALL' || (p.data.date && p.data.date.trim() === selectedDate));
+        });
+
+        if (filtered.length === 0) {
+            grid.innerHTML = '<div class="archive-empty-state"><div class="archive-empty-state__icon">🔍</div><div class="archive-empty-state__text">No case studies match the selected date.</div></div>';
+            return;
+        }
+
+        filtered.forEach(function (project, idx) {
+            const card = createCompactProjectCard(project, idx);
+            grid.appendChild(card);
+        });
+    }
+
+    function createCompactProjectCard(project, index) {
+        const data = project.data;
+        const card = el('div', 'compact-card');
+        card.setAttribute('tabindex', '0');
+        card.setAttribute('role', 'button');
+        card.setAttribute('aria-label', (data.title || 'Project') + '. Click to view full case study.');
+
+        // Image area
+        const imageArea = el('div', 'compact-card__image-area');
+        if (hasContent(data.image)) {
+            const imgPath = (/^(assets\/|content\/|http|\/)/i.test(data.image))
+                ? data.image
+                : 'content/projects/' + project.folder + '/' + data.image;
+            const img = el('img', 'compact-card__image');
+            img.src = imgPath;
+            img.alt = (data.title || 'Project') + ' preview';
+            img.loading = 'lazy';
+            img.onerror = function () {
+                this.parentElement.innerHTML = '<div class="project-card__image-placeholder" style="font-size: 0.9rem;">' + esc(data.title || project.folder) + '</div>';
+            };
+            imageArea.appendChild(img);
+        } else {
+            imageArea.innerHTML = '<div class="project-card__image-placeholder" style="font-size: 0.9rem;">' + esc(data.title || project.folder) + '</div>';
+        }
+        card.appendChild(imageArea);
+
+        // Body
+        const body = el('div', 'compact-card__body');
+        if (hasContent(data.category)) {
+            body.appendChild(el('div', 'compact-card__category', esc(data.category)));
+        }
+        if (hasContent(data.title)) {
+            body.appendChild(el('h3', 'compact-card__title', esc(data.title)));
+        }
+        if (hasContent(data.hook) || hasContent(data.description)) {
+            const excerptText = data.hook || data.description;
+            body.appendChild(el('p', 'compact-card__excerpt', esc(excerptText)));
+        }
+
+        // Meta (date & CTA)
+        const meta = el('div', 'compact-card__meta');
+        meta.appendChild(el('span', '', esc(data.date || '')));
+        const cta = el('span', 'compact-card__cta');
+        cta.innerHTML = 'View ' + icons.arrow;
+        meta.appendChild(cta);
+        body.appendChild(meta);
+
+        card.appendChild(body);
+
+        // Click opens full case study detail modal
+        card.addEventListener('click', function () {
+            openProjectModal(project);
+        });
+        card.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                openProjectModal(project);
+            }
+        });
+
+        return card;
+    }
+
 
     function openProjectModal(project) {
         const modal = document.getElementById('projectModal');
@@ -766,9 +902,9 @@
             const titleEl = el('h4', 'case-study__section-title', esc(sectionTitle));
             sec.appendChild(titleEl);
             const initialChildCount = sec.children.length;
-            
+
             renderCallback(sec);
-            
+
             // Only append to body if something was actually added besides the title
             if (sec.children.length > initialChildCount) {
                 body.appendChild(sec);
@@ -819,18 +955,18 @@
 
         // 1. Overview & Description
         if (hasContent(data.overview)) {
-            appendSectionIfContent('Overview', function(sec) {
+            appendSectionIfContent('Overview', function (sec) {
                 sec.appendChild(el('p', 'case-study__text', esc(data.overview)));
             });
         } else if (hasContent(data.description)) {
-            appendSectionIfContent('Overview', function(sec) {
+            appendSectionIfContent('Overview', function (sec) {
                 sec.appendChild(el('p', 'case-study__text', esc(data.description)));
             });
         }
 
         // 2. Target Users (Handles array of strings OR array of objects)
         if (hasContent(data.targetUsers)) {
-            appendSectionIfContent('Target Users', function(sec) {
+            appendSectionIfContent('Target Users', function (sec) {
                 const users = data.targetUsers;
                 if (Array.isArray(users)) {
                     const hasObjects = users.some(u => typeof u === 'object' && u !== null && (hasContent(u.name) || hasContent(u.description)));
@@ -890,7 +1026,7 @@
                 ? data[s.key].title
                 : s.title;
 
-            appendSectionIfContent(customTitle, function(sec) {
+            appendSectionIfContent(customTitle, function (sec) {
                 renderFlexibleValue(sec, data[s.key]);
             });
         });
@@ -898,7 +1034,7 @@
         // 4. Solution Prioritization Framework
         if (hasContent(data.solutionPrioritization) && typeof data.solutionPrioritization === 'object') {
             const sp = data.solutionPrioritization;
-            appendSectionIfContent('Solution Prioritization (' + esc(sp.framework || 'RICE') + ')', function(sec) {
+            appendSectionIfContent('Solution Prioritization (' + esc(sp.framework || 'RICE') + ')', function (sec) {
                 if (Array.isArray(sp.selectedSolutions)) {
                     const list = el('ul', 'case-study__list');
                     sp.selectedSolutions.forEach(function (sol) {
@@ -943,7 +1079,7 @@
 
         // 6. Proposed Solutions Cards
         if (hasContent(data.solutions) && Array.isArray(data.solutions)) {
-            appendSectionIfContent('Proposed Solutions', function(sec) {
+            appendSectionIfContent('Proposed Solutions', function (sec) {
                 data.solutions.forEach(function (sol) {
                     if (!sol) return;
                     const solCard = el('div', 'case-study__solution-card');
@@ -966,7 +1102,7 @@
 
         // 7. Success Metrics & Target Impact (Handles array of strings OR array of objects)
         if (hasContent(data.successMetrics)) {
-            appendSectionIfContent('Success Metrics & Target Impact', function(sec) {
+            appendSectionIfContent('Success Metrics & Target Impact', function (sec) {
                 const metrics = data.successMetrics;
                 if (Array.isArray(metrics)) {
                     const hasObjects = metrics.some(m => typeof m === 'object' && m !== null && (hasContent(m.value) || hasContent(m.label)));
@@ -998,7 +1134,7 @@
         if (Array.isArray(data.customSections)) {
             data.customSections.forEach(function (sec) {
                 if (!sec || !hasContent(sec.title) || !hasContent(sec.content)) return;
-                appendSectionIfContent(sec.title, function(secEl) {
+                appendSectionIfContent(sec.title, function (secEl) {
                     renderFlexibleValue(secEl, sec.content);
                 });
             });
@@ -1584,21 +1720,17 @@
             section.classList.add('hidden');
         } else {
             blogPosts.forEach(function (post, index) {
+                if (index >= 2) return; // Only show up to 2 blogs on landing page
+
                 const wrapper = el('div', 'blog-wrapper reveal');
                 wrapper.style.transitionDelay = (index * 100) + 'ms';
-                if (index >= 2) {
-                    wrapper.classList.add('blog-wrapper--hidden');
-                }
 
                 const card = createBlogCard(post, index);
                 wrapper.appendChild(card);
-                const article = createBlogArticle(post, index);
-                wrapper.appendChild(article);
-
                 grid.appendChild(wrapper);
             });
 
-            // Add View More / View Less Blogs button container
+            // Add View More Blogs button container
             var existingBtn = grid.parentElement.querySelector('.blog__view-more-container');
             if (existingBtn) existingBtn.remove();
 
@@ -1606,34 +1738,10 @@
             var viewMoreBtn = document.createElement('button');
             viewMoreBtn.className = 'blog__view-more';
             viewMoreBtn.innerHTML = 'View More Blogs <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>';
-            
-            if (blogPosts.length > 2) {
-                var isBlogExpanded = false;
-                viewMoreBtn.addEventListener('click', function () {
-                    isBlogExpanded = !isBlogExpanded;
-                    var wrappers = grid.querySelectorAll('.blog-wrapper');
-                    wrappers.forEach(function (b, i) {
-                        if (i >= 2) {
-                            if (isBlogExpanded) {
-                                b.classList.remove('blog-wrapper--hidden');
-                            } else {
-                                b.classList.add('blog-wrapper--hidden');
-                            }
-                        }
-                    });
-                    if (isBlogExpanded) {
-                        viewMoreBtn.innerHTML = 'View Less Blogs <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="transform: rotate(180deg);"><polyline points="6 9 12 15 18 9"/></svg>';
-                    } else {
-                        viewMoreBtn.innerHTML = 'View More Blogs <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>';
-                        var section = document.getElementById('blog');
-                        if (section) section.scrollIntoView({ behavior: 'smooth' });
-                    }
-                    initScrollReveal();
-                });
-            } else {
-                viewMoreBtn.style.opacity = '0.7';
-                viewMoreBtn.title = 'Additional blogs will expand when 3+ posts exist';
-            }
+            viewMoreBtn.addEventListener('click', function () {
+                openBlogArchiveModal();
+            });
+
             viewMoreContainer.appendChild(viewMoreBtn);
             grid.parentElement.appendChild(viewMoreContainer);
         }
@@ -1767,7 +1875,13 @@
         if (!modal) return;
         modal.classList.remove('blog-modal--open');
         modal.setAttribute('aria-hidden', 'true');
-        document.body.style.overflow = '';
+        const caseArchive = document.getElementById('caseStudyArchiveModal');
+        const blogArchive = document.getElementById('blogArchiveModal');
+        const isArchiveOpen = (caseArchive && caseArchive.classList.contains('project-modal--open')) ||
+                              (blogArchive && blogArchive.classList.contains('project-modal--open'));
+        if (!isArchiveOpen) {
+            document.body.style.overflow = '';
+        }
     }
 
     function initBlogModal() {
@@ -1781,6 +1895,153 @@
             if (e.key === 'Escape') closeBlogModal();
         });
     }
+
+    // ==========================================
+    // BLOG ARCHIVE MODAL & FILTERING
+    // ==========================================
+
+    function initBlogArchiveModal() {
+        const modal = document.getElementById('blogArchiveModal');
+        const backdrop = document.getElementById('blogArchiveBackdrop');
+        const closeBtn = document.getElementById('blogArchiveClose');
+        const catFilter = document.getElementById('blogCategoryFilter');
+        const dateFilter = document.getElementById('blogDateFilter');
+
+        if (backdrop) backdrop.addEventListener('click', closeBlogArchiveModal);
+        if (closeBtn) closeBtn.addEventListener('click', closeBlogArchiveModal);
+        if (catFilter) catFilter.addEventListener('change', renderBlogArchiveGrid);
+        if (dateFilter) dateFilter.addEventListener('change', renderBlogArchiveGrid);
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && modal && modal.classList.contains('project-modal--open')) {
+                closeBlogArchiveModal();
+            }
+        });
+    }
+
+    function openBlogArchiveModal() {
+        const modal = document.getElementById('blogArchiveModal');
+        if (!modal) return;
+
+        populateBlogArchiveFilters();
+        renderBlogArchiveGrid();
+
+        modal.classList.add('project-modal--open');
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeBlogArchiveModal() {
+        const modal = document.getElementById('blogArchiveModal');
+        if (!modal) return;
+        modal.classList.remove('project-modal--open');
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+    }
+
+    function populateBlogArchiveFilters() {
+        const catFilter = document.getElementById('blogCategoryFilter');
+        const dateFilter = document.getElementById('blogDateFilter');
+        if (!catFilter || !dateFilter) return;
+
+        const categories = new Set();
+        const dates = new Set();
+
+        blogPosts.forEach(function (post) {
+            if (hasContent(post.category)) categories.add(post.category.trim());
+            if (hasContent(post.date)) dates.add(post.date.trim());
+        });
+
+        const selectedCat = catFilter.value;
+        catFilter.innerHTML = '<option value="ALL">All Categories</option>';
+        categories.forEach(function (cat) {
+            const opt = document.createElement('option');
+            opt.value = cat;
+            opt.textContent = cat;
+            if (cat === selectedCat) opt.selected = true;
+            catFilter.appendChild(opt);
+        });
+
+        const selectedDate = dateFilter.value;
+        dateFilter.innerHTML = '<option value="ALL">All Dates</option>';
+        dates.forEach(function (d) {
+            const opt = document.createElement('option');
+            opt.value = d;
+            opt.textContent = d;
+            if (d === selectedDate) opt.selected = true;
+            dateFilter.appendChild(opt);
+        });
+    }
+
+    function renderBlogArchiveGrid() {
+        const grid = document.getElementById('blogArchiveGrid');
+        const catFilter = document.getElementById('blogCategoryFilter');
+        const dateFilter = document.getElementById('blogDateFilter');
+        if (!grid) return;
+
+        grid.innerHTML = '';
+        const selectedCat = catFilter ? catFilter.value : 'ALL';
+        const selectedDate = dateFilter ? dateFilter.value : 'ALL';
+
+        const filtered = blogPosts.filter(function (post) {
+            const matchesCat = (selectedCat === 'ALL' || (post.category && post.category.trim() === selectedCat));
+            const matchesDate = (selectedDate === 'ALL' || (post.date && post.date.trim() === selectedDate));
+            return matchesCat && matchesDate;
+        });
+
+        if (filtered.length === 0) {
+            grid.innerHTML = '<div class="archive-empty-state"><div class="archive-empty-state__icon">🔍</div><div class="archive-empty-state__text">No articles match the selected filters.</div></div>';
+            return;
+        }
+
+        filtered.forEach(function (post, idx) {
+            const card = createCompactBlogCard(post, idx);
+            grid.appendChild(card);
+        });
+    }
+
+    function createCompactBlogCard(post, index) {
+        const card = el('div', 'compact-card');
+        card.setAttribute('tabindex', '0');
+        card.setAttribute('role', 'button');
+        card.setAttribute('aria-label', (post.title || 'Blog Article') + '. Click to read article.');
+
+        const body = el('div', 'compact-card__body');
+        if (hasContent(post.category)) {
+            body.appendChild(el('div', 'compact-card__category', esc(post.category)));
+        }
+        if (hasContent(post.title)) {
+            body.appendChild(el('h3', 'compact-card__title', esc(post.title)));
+        }
+        if (hasContent(post.excerpt) || hasContent(post.introduction)) {
+            const excerptText = post.excerpt || post.introduction;
+            body.appendChild(el('p', 'compact-card__excerpt', esc(excerptText)));
+        }
+
+        // Meta (date & CTA)
+        const meta = el('div', 'compact-card__meta');
+        meta.appendChild(el('span', '', esc(post.date || '')));
+        const cta = el('span', 'compact-card__cta');
+        cta.innerHTML = 'Read Article ' + icons.arrow;
+        meta.appendChild(cta);
+        body.appendChild(meta);
+
+        card.appendChild(body);
+
+        // Click opens full blog detail modal
+        card.addEventListener('click', function () {
+            openBlogModal(post);
+        });
+        card.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                openBlogModal(post);
+            }
+        });
+
+        return card;
+    }
+
 
 
     // ==========================================
@@ -2090,12 +2351,33 @@
         const footer = document.getElementById('contact');
         if (!plane || !footer) return;
 
+        let lastFlyTime = 0;
+        const COOLDOWN_MS = 20000; // 20 seconds cooldown
+        let isFlying = false;
+
+        function triggerFlight() {
+            const now = Date.now();
+            if (isFlying) return;
+            if (now - lastFlyTime < COOLDOWN_MS) return;
+
+            isFlying = true;
+            lastFlyTime = now;
+
+            plane.classList.remove('footer-paper-plane--launched');
+            // Force reflow to restart CSS animation
+            void plane.offsetWidth;
+            plane.classList.add('footer-paper-plane--launched');
+        }
+
+        plane.addEventListener('animationend', function () {
+            isFlying = false;
+            plane.classList.remove('footer-paper-plane--launched');
+        });
+
         const observer = new IntersectionObserver(function (entries) {
             entries.forEach(function (entry) {
                 if (entry.isIntersecting) {
-                    plane.classList.add('footer-paper-plane--launched');
-                } else {
-                    plane.classList.remove('footer-paper-plane--launched');
+                    triggerFlight();
                 }
             });
         }, { threshold: 0.15 });
@@ -2127,6 +2409,8 @@
         initBlogModal();
         initProjectModal();
         initCertModal();
+        initCaseStudyArchiveModal();
+        initBlogArchiveModal();
         initFooterPlane();
 
         // Delayed init for animations (after content is rendered)

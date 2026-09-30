@@ -198,19 +198,20 @@
     <!-- ==========================================
          FOOTER / CONTACT
          ========================================== -->
-    <footer class="footer" id="contact" style="position: relative;">
+    <footer class="footer" id="contact" style="position: relative; overflow: visible;">
         <div class="container" style="position: relative;">
+            <!-- Crisp Origami Paper Airplane Doodle -->
+            <svg class="footer-paper-plane" id="footerPaperPlane" viewBox="0 0 64 64" fill="none" stroke="var(--color-accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M 54 10 L 10 32 L 26 44 L 54 10 Z" fill="rgba(57, 255, 20, 0.22)" />
+                <path d="M 26 44 L 35 24 L 54 10 L 26 44 Z" fill="rgba(57, 255, 20, 0.38)" />
+                <path d="M 26 44 L 28 54 L 35 40" stroke-width="1.8" />
+                <path d="M 10 32 C -5 45, 8 58, 22 46" stroke-dasharray="3 3" opacity="0.85" />
+                <circle cx="4" cy="52" r="2.5" fill="var(--color-accent)" />
+            </svg>
+
             <div class="footer__inner">
                 <div class="footer__cta-label">Get in touch</div>
-                <h2 class="footer__cta-title" style="position: relative; display: inline-block;">
-                    Let's Talk
-                    <!-- Paper Airplane Animated Doodle (Flies from Let's Talk to top right) -->
-                    <svg class="footer-paper-plane" id="footerPaperPlane" viewBox="0 0 60 60" fill="none" stroke="var(--color-accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <polygon points="50,10 10,28 26,38 38,22 30,48 50,10" fill="rgba(57, 255, 20, 0.15)" />
-                        <path d="M 10 28 C -2 40, 12 52, 26 38" stroke-dasharray="3 3" opacity="0.8" />
-                        <circle cx="4" cy="48" r="2.5" fill="var(--color-accent)" />
-                    </svg>
-                </h2>
+                <h2 class="footer__cta-title">Let's Talk</h2>
                 <p class="footer__cta-text">Interested in product thinking, collaboration, or just want to connect — I'd love to hear from you.</p>
 
                 <div class="footer__actions" id="footerActions">
@@ -273,6 +274,74 @@
             </button>
             <div class="project-modal__content" id="certModalContent">
                 <!-- Certificate details injected by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Case Study Archive Modal Overlay -->
+    <div class="project-modal archive-modal" id="caseStudyArchiveModal" role="dialog" aria-label="All Case Studies Archive" aria-hidden="true">
+        <div class="project-modal__backdrop" id="caseStudyArchiveBackdrop"></div>
+        <div class="project-modal__container archive-modal__container">
+            <button class="project-modal__close" id="caseStudyArchiveClose" aria-label="Close archive">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+            <div class="archive-modal__header">
+                <div class="section-label">Case Studies Archive</div>
+                <h2 class="archive-modal__title">All Case Studies</h2>
+                <p class="archive-modal__subtitle">Explore product teardowns, user research, and strategic problem-solving</p>
+
+                <!-- Filter Bar -->
+                <div class="archive-filters">
+                    <div class="archive-filter__group">
+                        <label class="archive-filter__label" for="caseStudyDateFilter">Date:</label>
+                        <select id="caseStudyDateFilter" class="archive-filter__select">
+                            <option value="ALL">All Dates</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="archive-modal__body">
+                <div class="archive-grid" id="caseStudyArchiveGrid">
+                    <!-- Compact Case Study cards rendered dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Blog Archive Modal Overlay -->
+    <div class="project-modal archive-modal" id="blogArchiveModal" role="dialog" aria-label="All Blogs Archive" aria-hidden="true">
+        <div class="project-modal__backdrop" id="blogArchiveBackdrop"></div>
+        <div class="project-modal__container archive-modal__container">
+            <button class="project-modal__close" id="blogArchiveClose" aria-label="Close blog archive">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+            <div class="archive-modal__header">
+                <div class="section-label">Articles Archive</div>
+                <h2 class="archive-modal__title">All Blog Articles</h2>
+                <p class="archive-modal__subtitle">Observations, product thinking, and PM journey notes</p>
+
+                <!-- Filter Bar -->
+                <div class="archive-filters">
+                    <div class="archive-filter__group">
+                        <label class="archive-filter__label" for="blogCategoryFilter">Category:</label>
+                        <select id="blogCategoryFilter" class="archive-filter__select">
+                            <option value="ALL">All Categories</option>
+                        </select>
+                    </div>
+                    <div class="archive-filter__group">
+                        <label class="archive-filter__label" for="blogDateFilter">Date:</label>
+                        <select id="blogDateFilter" class="archive-filter__select">
+                            <option value="ALL">All Dates</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="archive-modal__body">
+                <div class="archive-grid" id="blogArchiveGrid">
+                    <!-- Compact Blog cards rendered dynamically -->
+                </div>
             </div>
         </div>
     </div>

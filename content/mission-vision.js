@@ -6,12 +6,12 @@ const missionVision = {
 
     mission: {
         title: "Mission",
-        text: "To understand users deeply, solve real problems thoughtfully, and build products that genuinely make a difference in people's everyday lives."
+        text: "To understand people deeply, solve meaningful problems, and turn thoughtful ideas into simple, useful products that create genuine value."
     },
 
     vision: {
         title: "Vision",
-        text: "To grow into a Product Manager who bridges business, design, and technology — creating products that are simple, impactful, and built with empathy."
+        text: "To grow into a thoughtful Product Manager who brings people, ideas, and execution together, shaping products that make everyday experiences simpler, better, and more meaningful."
     }
 
 };
