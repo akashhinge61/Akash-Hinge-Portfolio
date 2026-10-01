@@ -3541,3 +3541,105 @@ section {
         page-break-inside: avoid;
     }
 }
+
+/* ============================================
+   ENHANCED RESPONSIVE DESIGN (MOBILE, TABLET, LAPTOP, ALL DEVICES)
+   ============================================ */
+
+/* Touch scrolling optimization for iOS & Android modals */
+.project-modal__container,
+.archive-modal__body,
+.blog-modal__content,
+.project-modal__content {
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Tablet & Medium Screens (768px - 1024px) */
+@media (max-width: 1024px) {
+    .container {
+        max-width: 100%;
+        padding: 0 var(--space-xl);
+    }
+
+    .case-study__flow-grid,
+    .case-study__user-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Mobile & Small Tablet (< 768px) */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 var(--space-md);
+    }
+
+    .case-study__flow-grid,
+    .case-study__user-grid,
+    .case-study__metrics-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .project-modal__container,
+    .archive-modal__container,
+    .blog-modal__container,
+    .cert-modal__container {
+        width: 96% !important;
+        max-height: 92vh !important;
+        margin: auto;
+    }
+
+    .living-doodle--about-orbit {
+        opacity: 0.25;
+        width: 200px;
+        height: 200px;
+        right: -80px;
+    }
+}
+
+/* Small Mobile Screens (< 480px) */
+@media (max-width: 480px) {
+    :root {
+        --fs-4xl: 2rem;
+        --fs-3xl: 1.6rem;
+        --fs-2xl: 1.35rem;
+    }
+
+    .hero__avatar-stage {
+        width: 230px !important;
+        height: 280px !important;
+    }
+
+    .hero__avatar-shape,
+    .hero__avatar-outline {
+        width: 200px !important;
+        height: 230px !important;
+    }
+
+    .hero__avatar-popout,
+    .hero__avatar-img--inside,
+    .hero__avatar-img--popout {
+        width: 220px !important;
+        height: 280px !important;
+    }
+
+    .archive-filters {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--space-xs);
+    }
+
+    .archive-filter__group {
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    .archive-filter__select {
+        flex: 1;
+        max-width: 180px;
+    }
+
+    .case-study__live-demo-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
