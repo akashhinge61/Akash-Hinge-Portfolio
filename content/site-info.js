@@ -12,7 +12,7 @@ const siteInfo = {
 
     github: "https://github.com/akashhinge61",
 
-    resume: "assets/resume/Akash Hinge Resume.pdf",
+    resume: "assets/resume/Akash%20Hinge%20Resume.pdf?v=3",
 
     profileImage: "assets/profile/akash profile.png.png",
 
