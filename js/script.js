@@ -64,15 +64,58 @@
         return div.innerHTML;
     }
 
-    /** Check if an image exists at the given path */
-    function imageExists(src) {
-        return new Promise(resolve => {
+    /** Check if an image or resource URL exists asynchronously */
+    function imageExists(url) {
+        return new Promise(function (resolve) {
+            if (!url || typeof url !== 'string') {
+                resolve(false);
+                return;
+            }
+            if (/\.pdf$/i.test(url)) {
+                resolve(true);
+                return;
+            }
             const img = new Image();
-            img.onload = () => resolve(true);
-            img.onerror = () => resolve(false);
-            img.src = src;
+            img.onload = function () { resolve(true); };
+            img.onerror = function () { resolve(false); };
+            img.src = url;
         });
     }
+
+    /** Parse date string (e.g., "April 2026", "Sep 2026", "July 26") to sortable timestamp */
+    function parseDateStringToTime(dateStr) {
+        if (!dateStr || typeof dateStr !== 'string') return Infinity;
+
+        const str = dateStr.trim();
+        const months = {
+            'january': 0, 'jan': 0,
+            'february': 1, 'feb': 1,
+            'march': 2, 'mar': 2,
+            'april': 3, 'apr': 3,
+            'may': 4,
+            'june': 5, 'jun': 5,
+            'july': 6, 'jul': 6,
+            'august': 7, 'aug': 7,
+            'september': 8, 'sep': 8, 'sept': 8,
+            'october': 9, 'oct': 9,
+            'november': 10, 'nov': 10,
+            'december': 11, 'dec': 11
+        };
+
+        const match = str.match(/([a-zA-Z]+)\s*(\d{2,4})?/i);
+        if (match) {
+            const mStr = match[1].toLowerCase();
+            let year = match[2] ? parseInt(match[2], 10) : 2026;
+            if (year < 100) year += 2000;
+
+            if (mStr in months) {
+                return new Date(year, months[mStr], 1).getTime();
+            }
+        }
+
+        return Infinity;
+    }
+
 
     /** SVG icons used throughout */
     const icons = {
@@ -494,7 +537,7 @@
     // 7. PROJECTS SYSTEM
     // ==========================================
 
-    const projectFolders = ['bookmyshow', 'bigbasket', 'uber', 'jtbd'];
+    const projectFolders = ['bookmyshow', 'bigbasket', 'uber', 'zomato', 'X (twitter)','jtbd'];
     const loadedProjects = [];
 
     function loadProjects() {
@@ -508,7 +551,7 @@
 
             const folder = projectFolders[loadIndex];
             const script = document.createElement('script');
-            script.src = 'content/projects/' + folder + '/project.js';
+            script.src = 'content/projects/' + folder + '/project.js?v=' + Date.now();
 
             script.onload = function () {
                 if (typeof projectData !== 'undefined' && projectData) {
@@ -737,7 +780,17 @@
         const dateFilter = document.getElementById('caseStudyDateFilter');
         if (!dateFilter) return;
 
-        const dates = new Set();
+        const baseMonths = [
+            "April 2026",
+            "May 2026",
+            "June 2026",
+            "July 2026",
+            "August 2026",
+            "September 2026",
+            "October 2026"
+        ];
+
+        const dates = new Set(baseMonths);
 
         loadedProjects.forEach(function (p) {
             if (p.data && hasContent(p.data.date)) {
@@ -745,9 +798,11 @@
             }
         });
 
+        const sortedDates = Array.from(dates).sort((a, b) => parseDateStringToTime(a) - parseDateStringToTime(b));
+
         const selectedDate = dateFilter.value;
-        dateFilter.innerHTML = '<option value="ALL">All Dates</option>';
-        dates.forEach(function (d) {
+        dateFilter.innerHTML = '<option value="ALL">All Added</option>';
+        sortedDates.forEach(function (d) {
             const opt = document.createElement('option');
             opt.value = d;
             opt.textContent = d;
@@ -766,7 +821,9 @@
 
         const filtered = loadedProjects.filter(function (p) {
             if (!p.data) return false;
-            return (selectedDate === 'ALL' || (p.data.date && p.data.date.trim() === selectedDate));
+            if (selectedDate === 'ALL') return true;
+            if (!p.data.date) return false;
+            return p.data.date.trim() === selectedDate || parseDateStringToTime(p.data.date) === parseDateStringToTime(selectedDate);
         });
 
         if (filtered.length === 0) {
@@ -924,8 +981,8 @@
                     if (typeof item === 'string') {
                         list.appendChild(el('li', '', esc(item)));
                     } else if (typeof item === 'object') {
-                        const itemTitle = item.title || item.name || item.heading || '';
-                        const itemDesc = item.description || item.reason || item.focus || item.observations || '';
+                        const itemTitle = item.title || item.name || item.heading || item.principle || item.type || '';
+                        const itemDesc = item.description || item.reason || item.focus || item.observations || item.purpose || item.text || '';
                         let text = '';
                         if (hasContent(itemTitle)) text += '<strong>' + esc(itemTitle) + '</strong>';
                         if (hasContent(itemTitle) && hasContent(itemDesc)) text += ': ';
@@ -937,14 +994,23 @@
                 });
                 if (list.children.length) container.appendChild(list);
             } else if (typeof val === 'object' && val !== null) {
+                if (hasContent(val.statement)) {
+                    container.appendChild(el('blockquote', '', esc(val.statement)));
+                }
+                if (hasContent(val.challengedAssumption)) {
+                    container.appendChild(el('p', 'case-study__text', '<strong>Challenged Assumption:</strong> ' + esc(val.challengedAssumption)));
+                }
                 if (hasContent(val.description)) {
                     container.appendChild(el('p', 'case-study__text', esc(val.description)));
+                }
+                if (hasContent(val.insight)) {
+                    container.appendChild(el('p', 'case-study__text', '<strong>Key Insight:</strong> ' + esc(val.insight)));
                 }
                 if (hasContent(val.problemStatement)) {
                     container.appendChild(el('blockquote', '', esc(val.problemStatement)));
                 }
-                // Handle nested arrays like steps, stages, priorities, issues, opportunities, directions, etc.
-                const childKeys = ['steps', 'stages', 'issues', 'priorities', 'opportunities', 'directions', 'points', 'targetMarket', 'existingAlternatives', 'constraints', 'trends', 'segments'];
+                // Handle nested arrays like steps, stages, priorities, issues, opportunities, directions, points, needs, coreBreakdown, etc.
+                const childKeys = ['steps', 'stages', 'issues', 'priorities', 'opportunities', 'directions', 'points', 'needs', 'coreBreakdown', 'targetMarket', 'existingAlternatives', 'constraints', 'trends', 'segments'];
                 childKeys.forEach(function (k) {
                     if (hasContent(val[k])) {
                         renderFlexibleValue(container, val[k]);
@@ -998,6 +1064,17 @@
         const dynamicSections = [
             { key: 'context', title: 'Context' },
             { key: 'challenge', title: 'Challenge' },
+            { key: 'jtbd', title: 'Jobs To Be Done (JTBD)' },
+            { key: 'jobsToBeDone', title: 'Jobs To Be Done (JTBD)' },
+            { key: 'userNeeds', title: 'User Needs Captured' },
+            { key: 'painPoints', title: 'User Pain Points' },
+            { key: 'deeperAnxiety', title: 'The Deeper Anxiety' },
+            { key: 'firstPrinciples', title: 'First Principles Analysis' },
+            { key: 'fundamentalProblems', title: 'Fundamental Problems' },
+            { key: 'solutionPrinciples', title: 'Solution Principles' },
+            { key: 'problemStatement', title: 'Core Problem Statement' },
+            { key: 'reflection', title: 'Reflection & Mindset Shift' },
+            { key: 'keyTakeaways', title: 'Key Takeaways' },
             { key: 'researchGoal', title: 'Research Goal' },
             { key: 'marketResearch', title: 'Market Research' },
             { key: 'userResearch', title: 'User Research' },
@@ -1005,7 +1082,6 @@
             { key: 'research', title: 'Research' },
             { key: 'researchInsights', title: 'Research Insights' },
             { key: 'userProblems', title: 'User Problems' },
-            { key: 'jobsToBeDone', title: 'Jobs To Be Done (JTBD)' },
             { key: 'userJourney', title: 'User Journey Evaluated' },
             { key: 'evaluation', title: 'UX Evaluation' },
             { key: 'keyIssues', title: 'Key UX Issues' },
@@ -1593,12 +1669,8 @@
         if (hasContent(titleText)) {
             body.appendChild(el('div', 'cert-card__name', esc(titleText)));
         }
-        if (hasContent(cert.provider)) {
-            body.appendChild(el('div', 'cert-card__provider', esc(cert.provider)));
-        }
-        if (hasContent(cert.date)) {
-            body.appendChild(el('div', 'cert-card__date', esc(cert.date)));
-        }
+        body.appendChild(el('div', 'cert-card__provider', hasContent(cert.provider) ? esc(cert.provider) : '&nbsp;'));
+        body.appendChild(el('div', 'cert-card__date', hasContent(cert.date) ? esc(cert.date) : '&nbsp;'));
 
         const cta = el('div', 'cert-card__cta');
         cta.innerHTML = 'View Details ' + icons.arrow;
@@ -1953,7 +2025,16 @@
         if (!catFilter || !dateFilter) return;
 
         const categories = new Set();
-        const dates = new Set();
+        const baseMonths = [
+            "April 2026",
+            "May 2026",
+            "June 2026",
+            "July 2026",
+            "August 2026",
+            "September 2026",
+            "October 2026"
+        ];
+        const dates = new Set(baseMonths);
 
         blogPosts.forEach(function (post) {
             if (hasContent(post.category)) categories.add(post.category.trim());
@@ -1970,9 +2051,11 @@
             catFilter.appendChild(opt);
         });
 
+        const sortedDates = Array.from(dates).sort((a, b) => parseDateStringToTime(a) - parseDateStringToTime(b));
+
         const selectedDate = dateFilter.value;
-        dateFilter.innerHTML = '<option value="ALL">All Dates</option>';
-        dates.forEach(function (d) {
+        dateFilter.innerHTML = '<option value="ALL">All Added</option>';
+        sortedDates.forEach(function (d) {
             const opt = document.createElement('option');
             opt.value = d;
             opt.textContent = d;
@@ -1993,7 +2076,12 @@
 
         const filtered = blogPosts.filter(function (post) {
             const matchesCat = (selectedCat === 'ALL' || (post.category && post.category.trim() === selectedCat));
-            const matchesDate = (selectedDate === 'ALL' || (post.date && post.date.trim() === selectedDate));
+            let matchesDate = false;
+            if (selectedDate === 'ALL') {
+                matchesDate = true;
+            } else if (post.date) {
+                matchesDate = (post.date.trim() === selectedDate || parseDateStringToTime(post.date) === parseDateStringToTime(selectedDate));
+            }
             return matchesCat && matchesDate;
         });
 
@@ -2183,12 +2271,14 @@
                 if (entry.isIntersecting) {
                     const id = entry.target.id;
                     navLinks.forEach(function (link) {
-                        link.classList.toggle('nav__link--active', link.dataset.section === id);
+                        const secVal = link.getAttribute('data-section') || (link.dataset && link.dataset.section);
+                        link.classList.toggle('nav__link--active', secVal === id);
                     });
 
                     // Also update mobile nav links
                     document.querySelectorAll('.nav__overlay .nav__link').forEach(function (link) {
-                        link.classList.toggle('nav__link--active', link.dataset.section === id);
+                        const secVal = link.getAttribute('data-section') || (link.dataset && link.dataset.section);
+                        link.classList.toggle('nav__link--active', secVal === id);
                     });
                 }
             });
@@ -2207,10 +2297,12 @@
             var docHeight = document.documentElement.scrollHeight;
             if (scrollPosition >= docHeight - 80) {
                 navLinks.forEach(function (link) {
-                    link.classList.toggle('nav__link--active', link.dataset.section === 'contact');
+                    const secVal = link.getAttribute('data-section') || (link.dataset && link.dataset.section);
+                    link.classList.toggle('nav__link--active', secVal === 'contact');
                 });
                 document.querySelectorAll('.nav__overlay .nav__link').forEach(function (link) {
-                    link.classList.toggle('nav__link--active', link.dataset.section === 'contact');
+                    const secVal = link.getAttribute('data-section') || (link.dataset && link.dataset.section);
+                    link.classList.toggle('nav__link--active', secVal === 'contact');
                 });
             }
         }, { passive: true });
@@ -2280,7 +2372,7 @@
 
         // Hide nav links for hidden sections
         document.querySelectorAll('.nav__link[data-section]').forEach(function (link) {
-            var sectionId = link.dataset.section;
+            var sectionId = link.getAttribute('data-section') || (link.dataset && link.dataset.section);
             if (sectionId === 'contact') return;
             var section = document.getElementById(sectionId);
             if (section && section.classList.contains('hidden')) {
@@ -2292,7 +2384,9 @@
 
         // Also hide in mobile nav
         document.querySelectorAll('.nav__overlay .nav__link').forEach(function (link) {
-            var sectionId = link.getAttribute('href').replace('#', '');
+            var href = link.getAttribute('href');
+            if (!href) return;
+            var sectionId = href.replace('#', '');
             if (sectionId === 'contact') return;
             var section = document.getElementById(sectionId);
             if (section && section.classList.contains('hidden')) {

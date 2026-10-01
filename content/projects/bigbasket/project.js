@@ -4,7 +4,7 @@ var projectData = {
     subtitle: "A UX evaluation of discovery, search, product listing, and product details",
     hook: "The shopping journey started strong, but important information became harder to find as users moved deeper into the experience.",
     description: "A UX evaluation examining how visual clutter, search-result prioritization, inconsistent interfaces, and unclear actions can create friction across the BigBasket shopping journey.",
-    date: "April 2026",
+    date: "May 2026",
     image: "assets/projects/bigbasket/cover.png",
     tags: [
         "UX Evaluation",

@@ -4,7 +4,7 @@ var projectData = {
     subtitle: "A Jobs-to-be-Done and First Principles analysis of group ordering",
     hook: "The real challenge in group ordering is not placing the order. It is coordinating people, contributions, payments, and decisions without creating stress or uncertainty.",
     description: "A Product Management exercise using Jobs-to-be-Done and First Principles Thinking to understand the deeper problems behind group ordering and identify the principles needed to create a more reliable experience.",
-    date: "Module 1",
+    date: "April 2026",
     image: "assets/projects/jtbd/cover.jpg",
     tags: [
         "Product Management",

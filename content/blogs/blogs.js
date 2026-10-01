@@ -10,7 +10,7 @@ const blogContent = [
         title: "Why I Chose Product Management",
         category: "Personal",
         excerpt: "The story behind my decision to pursue product management — and what excites me about building things that matter.",
-        date: "Sep 2026",
+        date: "September 2026",
         introduction: "Choosing a career was not difficult because I could not start. It was difficult because I was unsure whether I could truly see myself in one path.",
         body: [
             {
